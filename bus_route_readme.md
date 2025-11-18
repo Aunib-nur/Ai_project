@@ -1,36 +1,43 @@
-# Bus Route Finder (numBusesToDestination)
+1. Introduction
+The Bus Routes Problem is a classic  application of graph search techniques used in Artificial Intelligence and algorithm design. The goal is to determine the minimum number of buses required to travel from a given source bus stop to a target bus stop. Each bus route is represented as a circular path containing several stops, and a traveler may transfer between buses at any common stop.
+This problem models real-world public transportation navigation and demonstrates how Breadth-First Search (BFS) can be used to compute shortest-path solutions in unweighted graphs.
+2. Theory: Breadth‑First Search (BFS)
+Breadth-First Search (BFS) is a graph traversal algorithm that explores all nodes at the present depth before moving on to nodes at the next level.
+Why  we used BFS :
+Each bus ride represents a uniform cost.
+Transfers between buses represent graph edges.
+BFS guarantees the minimum number of bus transfers.
+BFS in this context:
+Nodes → Bus stops
+Edges → Reaching new stops through a bus route
+Cost → Number of bus routes used
+Because all "edges" have equal weight, BFS is optimal for solving this type of transportation shortest-path problem.
+3. Objectives
+To represent bus routes and stops as a graph.
+To implement an efficient BFS algorithm to compute the minimum number of buses needed to travel from source to target.
+To create a mapping between stops and buses to enable fast traversal.
+To determine when the destination is unreachable.
+To develop practical understanding of BFS and real-world graph modeling.
 
-This project contains a Python solution for finding the **minimum number of buses** required to travel from a **source stop** to a **target stop**, using Breadth-First Search (BFS).
 
----
-
-## 🚍 Problem Overview
-Given a list of bus routes:
-- Each route represents a bus and the stops it covers.
-- You start from a `source` stop.
-- You need to reach a `target` stop.
-
-The challenge is to determine the **minimum number of buses** you must take to reach your destination.
-
-If it is **not possible**, the function returns `-1`.
-
----
-
-## 🧠 Approach Summary
-The algorithm uses **BFS (Breadth-First Search)** because:
-- Each bus route can lead to many new stops.
-- BFS guarantees the shortest path in terms of number of buses.
-
-### Key Ideas:
-- Map each **stop → list of buses** that pass through it.
-- Use a queue to explore stops level-by-level.
-- Track visited buses and stops to avoid repetition.
-- For each stop, try taking every bus that visits it.
-
----
-
-## 📂 Code Implementation
-```python
+4. Algorithm
+Algorithm: Minimum Bus Transfers (BFS-Based Solver)
+Check Trivial Case: If source == target, return 0.
+Build Stop-to-Bus Map: Create a dictionary where each stop maps to all buses passing through it.
+Initialize BFS:
+Start queue with (source_stop, 0 buses_taken)
+Maintain two visited sets:
+visited_buses → Avoid reboarding same bus
+visited_stops → Avoid revisiting stops
+BFS Traversal:
+Pop a stop from queue
+Explore all buses that go through this stop
+For each unvisited bus:
+Mark the bus as visited
+Traverse all stops that this bus can reach
+If a stop == target → return buses_taken + 1
+Else enqueue the stop with incremented bus count
+If queue empties without reaching target: Return -1 (destination unreachable)
 from collections import deque
 
 class Solution:
@@ -65,51 +72,23 @@ class Solution:
                         visited_stops.add(next_stop)
                         queue.append((next_stop, buses_taken + 1))
         return -1
-```
 
----
-
-## ▶️ Example Usage
-```python
+# Now create input and call the function:
 routes = [[1,2,7], [3,6,7]]
 source = 1
 target = 6
 
 sol = Solution()
-print(sol.numBusesToDestination(routes, source, target))
-```
+print(sol.numBusesToDestination(routes, source, target))  # <-- should print 2
+6. Sample Input and Output
+Input:
+routes = [[1,2,7], [3,6,7]]
+source = 1
+target = 6
 Output:
-```
 2
-```
-Meaning: You need **2 buses** to go from stop **1** to stop **6**.
-
----
-
-## 📘 Explanation of Example
-- From **stop 1**, you take bus **0** (route: [1,2,7]).
-- You reach stop **7**.
-- From stop **7**, take bus **1** (route: [3,6,7]).
-- That bus reaches **stop 6**.
-
-Therefore: **2 buses required**.
-
----
-
-## ✅ Features
-- Uses BFS for guaranteed minimum bus count
-- Efficient for large datasets
-- Avoids revisiting buses/stops
-
----
-
-## 📄 License
-This is a simple educational implementation for algorithm learning and interview practice.
-
----
-
-If you want, brother, I can also create:
-- A visual diagram of BFS flow
-- An explanation in Bangla
-- A simplified beginner version of the code.
-
+8. Conclusion
+In this work, the BFS algorithm was successfully applied to determine the minimum number of bus transfers required to travel between two stops. The problem was modeled as a graph where stops and bus routes form interconnected nodes. BFS proved optimal for this unweighted shortest‑path scenario
+BFS is effective for transportation network problems.
+Mapping entities (stops → buses) is crucial for fast traversal.
+Python data structures such as dictionaries, sets, and queues enable efficient state exploration
