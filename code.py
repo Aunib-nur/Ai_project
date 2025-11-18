@@ -1,41 +1,42 @@
-rom collections import deque
+from collections import deque
 
 class Solution:
-    def cutOffTree(self, forest):
-        if not forest or not forest[0]:
-            return -1
+    def numBusesToDestination(self, routes, source, target):
+        if source == target:
+            return 0
+        stop_to_buses = {}
+        for bus_index in range(len(routes)):
+            route = routes[bus_index]
+            for stop in route:
+                if stop not in stop_to_buses:
+                    stop_to_buses[stop] = []
+                stop_to_buses[stop].append(bus_index)
 
-        rows, cols = len(forest), len(forest[0])
-        
-        # Step 1: Collect all trees with height > 1
-        trees = sorted((h, r, c) for r in range(rows) for c in range(cols) if forest[r][c] > 1)
+        queue = deque()
+        queue.append((source, 0))
+        visited_buses = set()
+        visited_stops = set([source])
 
-        def bfs(sr, sc, tr, tc):
-            if sr == tr and sc == tc:
-                return 0
-            visited = [[False]*cols for _ in range(rows)]
-            queue = deque([(sr, sc, 0)])
-            visited[sr][sc] = True
+        while queue:
+            stop, buses_taken = queue.popleft()
+            if stop not in stop_to_buses:
+                continue
+            for bus_index in stop_to_buses[stop]:
+                if bus_index in visited_buses:
+                    continue
+                visited_buses.add(bus_index)
+                for next_stop in routes[bus_index]:
+                    if next_stop == target:
+                        return buses_taken + 1
+                    if next_stop not in visited_stops:
+                        visited_stops.add(next_stop)
+                        queue.append((next_stop, buses_taken + 1))
+        return -1
 
-            while queue:
-                r, c, d = queue.popleft()
-                for dr, dc in [(0,1), (1,0), (0,-1), (-1,0)]:
-                    nr, nc = r + dr, c + dc
-                    if 0 <= nr < rows and 0 <= nc < cols and not visited[nr][nc] and forest[nr][nc] != 0:
-                        if nr == tr and nc == tc:
-                            return d + 1
-                        visited[nr][nc] = True
-                        queue.append((nr, nc, d + 1))
-            return -1
+# Now create input and call the function:
+routes = [[1,2,7], [3,6,7]]
+source = 1
+target = 6
 
-        total_steps = 0
-        sr = sc = 0
-
-        for height, tr, tc in trees:
-            steps = bfs(sr, sc, tr, tc)
-            if steps == -1:
-                return -1
-            total_steps += steps
-            sr, sc = tr, tc
-
-        return total_steps
+sol = Solution()
+print(sol.numBusesToDestination(routes, source, target))  # <-- should print 2
